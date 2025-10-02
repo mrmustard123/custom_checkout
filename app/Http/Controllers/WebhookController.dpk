@@ -1,0 +1,63 @@
+<?php
+/*WebhookController.php segun DeepSeek V3.2*/
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use App\Models\Subscription;
+use App\Models\WebhookLog;
+use App\Services\PaymentGateways\PaymentGatewayFactory;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+
+class WebhookController1 extends Controller
+{
+    /**
+     * Process Pagar.me webhook
+     */
+    public function pagarme(Request $request)
+    {
+        return $this->processWebhook('pagarme', $request);
+    }
+
+    /**
+     * Generic webhook processor
+     */
+    private function processWebhook(string $gatewayName, Request $request)
+    {
+        $payload = $request->getContent();
+        $signature = $request->header('X-Signature') ?? '';
+
+        try {
+            // Log webhook receipt
+            $webhookLog = WebhookLog::create([
+                'gateway' => $gatewayName,
+                'event_type' => 'unknown',
+                // ... otros campos del log
+            ]);
+
+            // Get gateway instance
+            $gateway = PaymentGatewayFactory::create($gatewayName);
+
+            // Verify webhook signature
+            if (!$gateway->verifyWebhookSignature($payload, $signature)) {
+                $webhookLog->markAsFailed('Invalid signature');
+                Log::warning("Webhook signature verification failed for {$gatewayName}");
+
+                return response()->json(['error' => 'Invalid signature'], 401);
+            }
+
+            // ... lógica para procesar el webhook
+        } catch (\Exception $e) {
+            Log::error("Webhook processing failed for {$gatewayName}", [
+                'error' => $e->getMessage(),
+                'payload' => $payload,
+            ]);
+
+            return response()->json(['error' => 'Webhook processing failed'], 500);
+        }
+    }
+
+    // ... otros métodos
+}

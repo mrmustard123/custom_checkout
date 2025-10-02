@@ -1,0 +1,74 @@
+<?php
+/*web.php según Claude Sonnet 4.5*/
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\SubscriptionController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Checkout Routes
+|--------------------------------------------------------------------------
+*/
+
+// Show checkout page
+Route::get('/checkout/{product?}', [CheckoutController::class, 'show'])->name('checkout.show');
+
+// Process checkout
+Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+
+// Success page
+Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+// Error page
+Route::get('/checkout/error', [CheckoutController::class, 'error'])->name('checkout.error');
+
+/*
+|--------------------------------------------------------------------------
+| Webhook Routes (without CSRF protection)
+|--------------------------------------------------------------------------
+*/
+
+// These routes need to be excluded from CSRF verification
+// Add to app/Http/Middleware/VerifyCsrfToken.php: 'webhook/*'
+
+Route::post('/webhook/stripe', [WebhookController::class, 'stripe'])->name('webhook.stripe');
+Route::post('/webhook/pagarme', [WebhookController::class, 'pagarme'])->name('webhook.pagarme');
+Route::post('/webhook/mercadopago', [WebhookController::class, 'mercadopago'])->name('webhook.mercadopago');
+Route::post('/webhook/dummy', [WebhookController::class, 'dummy'])->name('webhook.dummy');
+
+/*
+|--------------------------------------------------------------------------
+| Subscription Management Routes (API-like)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
+    // List customer subscriptions
+    Route::get('/', [SubscriptionController::class, 'index'])->name('index');
+    
+    // Get subscription details
+    Route::get('/{id}', [SubscriptionController::class, 'show'])->name('show');
+    
+    // Cancel subscription
+    Route::post('/{id}/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
+    
+    // Resume subscription
+    Route::post('/{id}/resume', [SubscriptionController::class, 'resume'])->name('resume');
+    
+    // Update payment method
+    Route::post('/{id}/payment-method', [SubscriptionController::class, 'updatePaymentMethod'])->name('update-payment-method');
+    
+    // Sync status with gateway
+    Route::post('/{id}/sync', [SubscriptionController::class, 'syncStatus'])->name('sync');
+});

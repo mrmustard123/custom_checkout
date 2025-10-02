@@ -19,22 +19,32 @@ class StripeGateway extends AbstractPaymentGateway
 {
     protected function initialize(): void
     {
-        $this->apiKey = config('payment_gateways.stripe.secret_key');
-        $this->apiSecret = config('payment_gateways.stripe.webhook_secret');
-        $this->sandbox = config('payment_gateways.stripe.sandbox', true);
-        $this->baseUrl = $this->sandbox 
-            ? 'https://api.stripe.com/v1' 
-            : 'https://api.stripe.com/v1';
+        $this->apiKey = config('payment_gateways_config.stripe.secret_key', '');
+        $this->apiSecret = config('payment_gateways_config.stripe.webhook_secret', '');
+        $this->sandbox = config('payment_gateways_config.stripe.sandbox', true);
+        $this->baseUrl = $this->sandbox ? 'https://api.stripe.com/v1' : 'https://api.stripe.com/v1';
+
+        // Si no hay API key, usar valores dummy para desarrollo
+        if (empty($this->apiKey)) {
+            $this->apiKey = 'sk_test_dummy_key_' . uniqid();
+            $this->apiSecret = 'whsec_dummy_secret_' . uniqid();
+        }
     }
 
     public function getGatewayName(): string
     {
         return 'stripe';
     }
-
+    
     public function isAvailable(): bool
     {
-        return !empty($this->apiKey);
+        // Para desarrollo, siempre disponible incluso sin API key real
+        if (app()->environment('local', 'development')) {
+            return true;
+        }
+
+        // En producción, requiere API key real
+        return !empty($this->apiKey) && !str_contains($this->apiKey, 'dummy');
     }
 
     protected function getHeaders(): array

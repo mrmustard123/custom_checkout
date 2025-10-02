@@ -1,0 +1,64 @@
+<?php
+
+// SubscriptionController.php segun DeepSeek V3.2
+
+namespace App\Http\Controllers;
+
+use App\Models\Subscription;
+use App\Services\PaymentGateways\PaymentGatewayFactory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class SubscriptionController1 extends Controller
+{
+    /**
+     * Show subscription management page
+     */
+    public function show(Subscription $subscription)
+    {
+        return view('subscriptions.show', compact('subscription'));
+    }
+
+    /**
+     * Cancel subscription
+     */
+    public function cancel(Request $request, Subscription $subscription)
+    {
+        $request->validate([
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            // Cancel in gateway first
+            $gateway = PaymentGatewayFactory::create($subscription->gateway);
+            $result = $gateway->cancelSubscription($subscription);
+
+            if ($result['success']) {
+                // Cancel locally
+                $immediately = $request->boolean('immediately', false);
+                $subscription->cancel($immediately);
+
+                Log::info("Subscription cancelled", [
+                    'subscription_id' => $subscription->id,
+                    'reason' => $request->reason,
+                    'immediately' => $immediately,
+                ]);
+
+                return redirect()->back()
+                    ->with('success', 'Assinatura cancelada com sucesso.');
+            } else {
+                throw new \Exception($result['message'] ?? 'Failed to cancel subscription in gateway');
+            }
+        } catch (\Exception $e) {
+            Log::error("Subscription cancellation failed", [
+                'subscription_id' => $subscription->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Falha ao cancelar assinatura: ' . $e->getMessage());
+        }
+    }
+
+    // ... otros métodos
+}

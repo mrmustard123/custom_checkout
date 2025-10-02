@@ -1,61 +1,377 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Maria Checkout
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A customizable payment gateway checkout system built with Laravel and Vue.js, designed for easy integration with multiple payment providers.
 
-## About Laravel
+## Developer
+Develped by **Leonardo G. Tellez Saucedo** with Claude Sonnet 4.5 and DeepSeek V3.2 assistance.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Email: leonardo616@gmail.com
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- 🎨 **Modern UI** - Clean, responsive design with Tailwind CSS
+- 💳 **Multiple Payment Methods** - PIX and Credit Card support
+- 🔌 **Gateway Agnostic** - Easy to switch between payment providers
+- 🔄 **Subscription Management** - Recurring payments and subscription handling
+- 📊 **Webhook Processing** - Automatic payment status updates
+- 🛡️ **Secure** - PCI compliant card handling with tokenization
+- 🌐 **API Ready** - RESTful API for subscription management
 
-## Learning Laravel
+## Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Backend:** Laravel 11.x, PHP 8.2+
+- **Frontend:** Vue 3, Tailwind CSS or Alpine.js and Blade(alternativly)
+- **Database:** MySQL 8.0+
+- **Build Tool:** Vite
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Payment Gateways Supported
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- ✅ Stripe
+- ✅ Dummy Gateway (for testing)
+- 🔜 Pagar.me
+- 🔜 Mercado Pago
 
-## Laravel Sponsors
+## Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Prerequisites
 
-### Premium Partners
+- PHP 8.2 or higher
+- Composer
+- Node.js 18+ and NPM
+- MySQL 8.0+
+- WampServer (for Windows) or similar local server
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Setup
+
+1. **Clone the repository**
+   ```bash
+   cd C:\wamp64\www
+   https://github.com/mrmustard123/custom_checkout.git
+   cd maria-checkout
+   ```
+
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
+
+3. **Install Node dependencies**
+   ```bash
+   npm install
+   ```
+
+4. **Configure environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+5. **Configure database in `.env`**
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=maria_checkout
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+6. **Configure payment gateway** (optional for production)
+   ```env
+   PAYMENT_GATEWAY_DEFAULT=dummy
+   
+   # For Stripe
+   # STRIPE_SECRET_KEY=your_secret_key
+   # STRIPE_PUBLISHABLE_KEY=your_publishable_key
+   # STRIPE_WEBHOOK_SECRET=your_webhook_secret
+   ```
+
+7. **Run migrations**
+   ```bash
+   php artisan migrate
+   ```
+
+8. **Build frontend assets**
+   ```bash
+   # Development mode (with hot reload)
+   npm run dev
+   
+   # OR Production build
+   npm run build
+   ```
+
+9. **Start the development server**
+   ```bash
+   php artisan serve
+   ```
+
+10. **Access the application**
+    ```
+    http://localhost:8000/maria_checkout/
+    ```
+
+## Project Structure
+
+```
+maria-checkout/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── CheckoutController.php      # Handles checkout process
+│   │   ├── WebhookController.php       # Processes payment webhooks
+│   │   └── SubscriptionController.php  # Manages subscriptions
+│   ├── Models/
+│   │   ├── Customer.php
+│   │   ├── Order.php
+│   │   ├── Subscription.php
+│   │   ├── PaymentMethod.php
+│   │   └── WebhookLog.php
+│   └── Services/
+│       └── PaymentGateways/
+│           ├── Contracts/
+│           │   └── PaymentGatewayInterface.php
+│           ├── Gateways/
+│           │   ├── DummyGateway.php
+│           │   └── StripeGateway.php
+│           ├── AbstractPaymentGateway.php
+│           └── PaymentGatewayFactory.php
+├── resources/
+│   ├── js/
+│   │   ├── components/
+│   │   │   ├── CheckoutForm.vue
+│   │   │   └── PixPayment.vue
+│   │   ├── app.js
+│   │   └── bootstrap.js
+│   ├── css/
+│   │   └── app.css
+│   └── views/
+│       ├── layouts/
+│       │   └── app.blade.php
+│       └── checkout/
+│           ├── show.blade.php
+│           ├── success.blade.php
+│           └── error.blade.php
+├── config/
+│   └── payment_gateways.php
+└── routes/
+    └── web.php
+```
+
+## Usage
+
+### Basic Checkout Flow
+
+1. Customer visits `/checkout/{product}`
+2. Fills in personal information
+3. Selects payment method (PIX or Credit Card)
+4. Submits payment
+5. Redirected to success/error page
+
+### Testing with Dummy Gateway
+
+Use these test cards:
+
+- **Visa:** `4111 1111 1111 1111`
+- **Mastercard:** `5555 5555 5555 4444`
+- **Any future expiry date and CVV**
+
+### API Endpoints
+
+#### Checkout
+```bash
+GET  /checkout/{product?}           # Show checkout page
+POST /checkout/process              # Process payment
+GET  /checkout/success/{order}      # Success page
+```
+
+#### Webhooks
+```bash
+POST /webhook/stripe                # Stripe webhooks
+POST /webhook/pagarme               # Pagar.me webhooks
+POST /webhook/dummy                 # Dummy gateway webhooks
+```
+
+#### Subscriptions
+```bash
+GET  /subscriptions                 # List customer subscriptions
+POST /subscriptions/{id}/cancel     # Cancel subscription
+POST /subscriptions/{id}/resume     # Resume subscription
+POST /subscriptions/{id}/sync       # Sync with gateway
+```
+
+## Adding New Payment Gateways
+
+1. **Create gateway class**
+   ```php
+   // app/Services/PaymentGateways/Gateways/NewGateway.php
+   class NewGateway extends AbstractPaymentGateway
+   {
+       // Implement interface methods
+   }
+   ```
+
+2. **Register in factory**
+   ```php
+   // app/Services/PaymentGateways/PaymentGatewayFactory.php
+   private static array $gateways = [
+       'new_gateway' => NewGateway::class,
+   ];
+   ```
+
+3. **Add configuration**
+   ```php
+   // config/payment_gateways.php
+   'new_gateway' => [
+       'api_key' => env('NEW_GATEWAY_API_KEY'),
+   ],
+   ```
+
+## Database Schema
+
+### Main Tables
+
+- **customers** - Customer information
+- **orders** - Payment orders
+- **subscriptions** - Recurring subscriptions
+- **payment_methods** - Saved payment methods
+- **webhook_logs** - Webhook processing logs
+
+## Configuration
+
+### Environment Variables
+
+```env
+# App
+APP_URL=http://localhost/maria-checkout/public
+
+# Payment Gateway
+PAYMENT_GATEWAY_DEFAULT=dummy
+
+# PIX
+PIX_EXPIRATION_MINUTES=30
+
+# Subscriptions
+SUBSCRIPTION_TRIAL_DAYS=0
+SUBSCRIPTION_GRACE_PERIOD_DAYS=3
+SUBSCRIPTION_MAX_FAILED_ATTEMPTS=3
+```
+
+## Security
+
+- ✅ CSRF protection on all forms
+- ✅ Webhook signature verification
+- ✅ Card data never stored (tokenization)
+- ✅ SQL injection prevention (Eloquent ORM)
+- ✅ XSS protection (Blade templating)
+- ✅ Rate limiting on API endpoints
+
+## Logging
+
+Payment gateway activities are logged to:
+```
+storage/logs/payment-gateways.log
+```
+
+## WordPress Integration
+
+For WordPress integration, the checkout can receive user data via JWT token:
+
+```javascript
+// In WordPress
+const token = generateJWT(userId, productId);
+window.location.href = `checkout.domain.com?token=${token}`;
+
+// Laravel validates and pre-fills form
+```
+
+## Troubleshooting
+
+### Assets not loading
+```bash
+npm run build
+php artisan optimize:clear
+```
+
+### Database issues
+```bash
+php artisan migrate:fresh
+```
+
+### Permission errors (Linux/Mac)
+```bash
+chmod -R 775 storage bootstrap/cache
+```
+
+## Development
+
+### Code Style
+- Follow PSR-12 standards
+- Use meaningful variable names
+- Comment complex logic
+- Write in English
+
+### Testing
+```bash
+php artisan test
+```
+
+## Production Deployment
+
+1. Set environment to production
+   ```env
+   APP_ENV=production
+   APP_DEBUG=false
+   ```
+
+2. Build assets
+   ```bash
+   npm run build
+   ```
+
+3. Optimize Laravel
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
+
+4. Set proper permissions
+   ```bash
+   chmod -R 755 storage bootstrap/cache
+   ```
+
+5. Configure SSL certificate
+
+6. Set up cron for scheduled tasks
+   ```bash
+   * * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
+   ```
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The Laravel framework is open-sourced software licensed under the MIT license.
+
+## Support
+
+For support, email: support@example.com
+
+## Changelog
+
+### Version 1.0.0 (2024)
+- Initial release
+- PIX and Credit Card support
+- Stripe integration
+- Subscription management
+- Webhook processing
+- Vue.js checkout interface
+
+---
+
+**Built with ❤️ for Maria's business**

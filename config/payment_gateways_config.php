@@ -23,9 +23,9 @@ return [
     */
 
     'stripe' => [
-        'secret_key' => env('STRIPE_SECRET_KEY', ''),
-        'publishable_key' => env('STRIPE_PUBLISHABLE_KEY', ''),
-        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),
+        'secret_key' => env('STRIPE_SECRET_KEY', 'VIVA YO'),
+        'publishable_key' => env('STRIPE_PUBLISHABLE_KEY', 'VIVA LEO'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', 'LERU LERU CANDELERU'),
         'sandbox' => env('STRIPE_SANDBOX', true),
     ],
 
