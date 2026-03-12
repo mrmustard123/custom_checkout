@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/laravel/compare/v12.3.1...12.x)
+## [Unreleased](https://github.com/laravel/laravel/compare/First...main)
+
+## [First](https://github.com/laravel/laravel/compare/v12.3.1...First) - 2025-10-02
+
+Primera release que hago
 
 ## [v12.3.1](https://github.com/laravel/laravel/compare/v12.3.0...v12.3.1) - 2025-08-21
 
